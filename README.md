@@ -19,7 +19,7 @@ When first run the region information is cached in a graphml file region.xml whi
 Later the region data is read from the graphml based tinkerpop graphdatabase.
 
 The matching result currently works for the global data for some 251 regions.
-
+<pre>
 ✅            Afghanistan                        33.0,  65.0 -  145 km->    AF;     Q889;                             Afghanistan; 34940837;  34.0;  66.0
 ✅                Albania                        41.2,  20.2 -   22 km->    AL;     Q222;                                 Albania;  3020209;  41.0;  20.0
 ✅                Algeria                        28.0,   1.7 -   65 km->    DZ;     Q262;                                 Algeria; 41318142;  28.0;   1.0
@@ -272,3 +272,4 @@ The matching result currently works for the global data for some 251 regions.
 ✅               Botswana                       -22.3,  24.7 -  103 km->    BW;     Q963;                                Botswana;  2291661; -22.2;  23.7
 ✅                Burundi                        -3.4,  29.9 -   34 km->    BI;     Q967;                                 Burundi; 10864245;  -3.7;  29.8
 ✅           Sierra Leone                         8.5, -11.8 -   16 km->    SL;    Q1044;                            Sierra Leone;  7557212;   8.5; -11.9
+</pre>
