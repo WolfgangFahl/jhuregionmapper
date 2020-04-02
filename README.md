@@ -1,6 +1,8 @@
 # jhuregionmapper
 Maps Johns Hopkins University COVID-19 regions to iso country and region code and Wikidata Entity Ids
 
+see https://github.com/CSSEGISandData/COVID-19/issues/1908
+
 # Installation
 The software is written in Python and uses JanusGraph and Apache Tinkerpop
 
