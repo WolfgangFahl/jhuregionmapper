@@ -27,4 +27,7 @@ install:
 
 # command to run tests
 script:
+  # wait until gremlin is available
+  - ./waitport gremlin localhost 8182
+  # then start tests
   - python3 -m unittest discover
