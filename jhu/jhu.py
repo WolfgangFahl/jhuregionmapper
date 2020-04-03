@@ -65,7 +65,6 @@ class TimeSeries():
         download the given 
         '''
         with requests.Session() as s:
-            s.config['keep_alive'] = False
             download = s.get(self.csvurl)
             decoded_content = download.content.decode('utf-8')
             cr = csv.reader(decoded_content.splitlines(), delimiter=',')
