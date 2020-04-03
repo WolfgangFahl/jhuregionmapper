@@ -115,7 +115,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         #    print (date)
         print("%d regions" % len(ts.regions))
         for region in ts.regions:
-            print ("%21s:%20s %4.1f %4.1f" % (region.country, region.province, region.lat, region.lon))
+            print ("%35s:%35s %5.1f %5.1f" % (region.country, region.province, region.lat, region.lon))
             pass
         
     def test_MatchRegions(self):
