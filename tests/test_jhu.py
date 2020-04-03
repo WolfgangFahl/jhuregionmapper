@@ -75,7 +75,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         self.clean()
         g = self.rg.g
         graphmlFile = "air-routes-small.xml";
-        for path in [".","test"]:
+        for path in [".","tests"]:
             graphmlPath=path+"/"+graphmlFile
             if os.path.isfile(graphmlPath):
                 shared = self.rg.share(graphmlPath)
