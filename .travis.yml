@@ -17,9 +17,6 @@ services:
 before_install:
   # check version
   - lsb_release -a
-  - mkdir $HOME/graphdata
-  # start janusgraph in docker image in background
-  - docker run -it -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph&
 
 # command to install python dependencies
 install:
@@ -27,7 +24,5 @@ install:
 
 # command to run tests
 script:
-  # wait until gremlin is available
-  - ./waitport gremlin localhost 8182
-  # then start tests
-  - python3 -m unittest discover
+  # test wit docker image start and waiting for janusgraph to be ready
+  - ./test

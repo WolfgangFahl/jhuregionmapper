@@ -6,9 +6,16 @@ then
   mkdir $HOME/graphdata
 fi
 # start janusgraph in docker image in background
-docker run -i -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph&
-
+rm nohup.out
+nohup docker run -i -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph&
 ./install
+./waitport gremlin-port localhost 8182
+echo "waiting for janusgraph to be ready"
+while  grep "started at port 8182" nohup.output > /dev/null
+do
+  sleep 1
+  echo -n "."
+done
 
-./waitport gremlin localhost 8182
+
 python3 -m unittest discover
