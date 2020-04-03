@@ -1,3 +1,9 @@
 # 2020-03-22
+# https://pypi.org/project/gremlinpython/
+# latest 3.4.6 released 2020-02-24
+gremlinpython==3.4.6
 #https://qwikidata.readthedocs.io/en/stable/readme.html
 qwikidata
+pyproj
+#https://pypi.org/project/geopy/
+geopy
