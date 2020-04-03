@@ -11,11 +11,9 @@ nohup docker run -i -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,t
 ./install
 ./waitport gremlin-port localhost 8182
 echo "waiting for janusgraph to be ready"
-while  grep "started at port 8182" nohup.output > /dev/null
+while  grep "started at port 8182" nohup.out > /dev/null
 do
   sleep 1
   echo -n "."
 done
-
-
 python3 -m unittest discover
