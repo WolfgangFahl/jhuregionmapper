@@ -55,6 +55,9 @@ WHERE
   # US state
   UNION
   { ?region wdt:P31 wd:Q35657. }
+  # unincorporated territory (Q783733) U.S. territory to which limited constitutional rights are available
+  UNION
+  { ?region wdt:P31 wd:Q783733. }
   #  province of Canada (Q11828004) 
   UNION
   { ?region wdt:P31 wd:Q11828004. } 
@@ -158,7 +161,7 @@ WHERE
         return region        
         
     def __str__(self):
-        text= ("%6s;%9s;%40s;%9s;%6.1f;%6.1f" % (self.isocode,self.wikiDataId,self.name,self.pop,self.lat,self.lon))    
+        text= ("%6s;%9s;%43s;%11s;%6.1f;%6.1f" % (self.isocode,self.wikiDataId,self.name,self.pop,self.lat,self.lon))    
         return text
         
             

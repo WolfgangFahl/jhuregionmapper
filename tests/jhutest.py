@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from tp.gremlin import RemoteGremlin, TinkerPopAble
 from jhu.pop import Region
-from jhu.jhu import TimeSeries
+from jhu.jhu import COVIDCases
 from jhu.jhu import Region as TRegion
 from jhu.loc import Projection
 
@@ -31,7 +31,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # developer's environment
         # adapt to your own username and needs
         if getpass.getuser()=="wf":
-            self.gremlinsverer="capri.bitplan.com"
+            self.gremlinserver="capri.bitplan.com"
             self.sharepoint="/Volumes/bitplan/user/wf/graphdata/"
         # open the remote gremlin connection and set up the share point    
         self.rg = RemoteGremlin(self.gremlinserver)
@@ -53,7 +53,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # get the vertices
         gV = self.rg.g.V()
         # drop the existing content of the graph
-        gV.E().drop().iterate()
+        #gV.E().drop().iterate()
         gV.V().drop().iterate()
     
     def testJanusGraph(self):
@@ -103,19 +103,20 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData)  
         # we check the number of regions expected here - please adapt if the
         # SPARQL query or WikiData content changes
-        self.assertEquals(415, len(Region.regions))
+        self.assertEquals(424, len(Region.regions))
         self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
         pass    
     
     def test_JHU_Regions(self):
         ''' test getting the names from John Hopkins university 
         time series data country and province'''
-        ts = TimeSeries()
+        cases = COVIDCases()
+        cases.downloadAll()
         # for date in ts.dates:
         #    print (date)
-        print("%d regions" % len(ts.regions))
-        for region in ts.regions:
-            print ("%35s:%35s %5.1f %5.1f" % (region.country, region.province, region.lat, region.lon))
+        print("%d regions" % len(cases.regions))
+        for region in cases.regions.values():
+            print ("%35s:%35s %6.1f %6.1f" % (region.country, region.province, region.lat, region.lon))
             pass
         
     def test_MatchRegions(self):
@@ -127,8 +128,9 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         gfile = "region.xml"
         TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData) 
         print ("cached %3d ISO regions (from WikiData)" % (len(Region.regions)))
-        ts = TimeSeries()
-        print ("loaded %3d case regions (from Johns Hopkins University)" % (len(ts.regions)))    
+        cases = COVIDCases()
+        cases.downloadAll()
+        print ("loaded %3d case regions (from Johns Hopkins University)" % (len(cases.regions.values())))    
         TRegion.debug = True
         matches = 0
         fixes = {"US;":"Q30", "Germany;":"Q183", "United Kingdom;": "Q145", "Netherlands;":"Q29999", "Norway;":"Q20", "Holy See;":"Q237", "Korea, South;":"Q884", "Taiwan*;":"Q57251",
@@ -142,6 +144,8 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
                  "Congo (Brazzaville);":"Q974","Congo (Kinshasa);":"Q974",
                  "France;French Polynesia":"Q30971",
                  "Cameroon;":"Q1009", "Mauritania;":"Q1025","Burma;":"Q836", "Malaysia;":"Q833",
+        # US
+                 "US;Northern Mariana Islands":"Q16644",
         # political incorrect ?
                  "Kosovo;":"Q403","West Bank and Gaza;":"Q801",
         # exotic case Cruise ship with lat/lon - in Oakland California ...
@@ -150,7 +154,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         regionByWikiDataId = {}
         for iregion in Region.regions:
             regionByWikiDataId[iregion.wikiDataId] = iregion
-        for region in ts.regions:
+        for region in cases.regions.values():
             matches = matches + region.matchIsoRegion(regionByWikiDataId, fixes)
         print ("found %3d matches" % (matches))    
             
