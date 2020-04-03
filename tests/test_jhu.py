@@ -8,9 +8,9 @@ import getpass
 import os
 from pathlib import Path
 from tp.gremlin import RemoteGremlin, TinkerPopAble
-from jhu.pop import Region
+from jhu.pop import ISORegion
 from jhu.jhu import COVIDCases
-from jhu.jhu import Region as TRegion
+from jhu.jhu import Region
 from jhu.loc import Projection
 
 class JohnsHopkinsRegionMappingTest(unittest.TestCase):
@@ -98,17 +98,17 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         g.io(self.rg.sharepath + gfile).write().iterate()
         self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
         
-    def test_CacheRegion(self):
+    def test_CacheISORegions(self):
         '''
         test caching region information retrieved from WikiData via a SPARQL query
         '''
         self.clean()
-        gfile = "region.xml"
-        TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData)  
+        gfile = "isoregions.xml"
+        cachefile=TinkerPopAble.cache(self.rg, gfile, ISORegion, ISORegion.regions, ISORegion.fromWikiData)  
         # we check the number of regions expected here - please adapt if the
         # SPARQL query or WikiData content changes
-        self.assertTrue(422<=len(Region.regions))
-        self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
+        self.assertTrue(422<=len(ISORegion.regions))
+        self.assertTrue(os.path.isfile(cachefile),cachefile)
         pass    
     
     def test_JHU_Regions(self):
@@ -129,13 +129,13 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         lat/lon distance
         '''
         self.clean()
-        gfile = "region.xml"
-        TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData) 
-        print ("cached %3d ISO regions (from WikiData)" % (len(Region.regions)))
+        gfile = "isoregions.xml"
+        TinkerPopAble.cache(self.rg, gfile, ISORegion, ISORegion.regions, ISORegion.fromWikiData) 
+        print ("cached %3d ISO regions (from WikiData)" % (len(ISORegion.regions)))
         cases = COVIDCases()
         cases.downloadAll()
         print ("loaded %3d case regions (from Johns Hopkins University)" % (len(cases.regions.values())))    
-        TRegion.debug = True
+        Region.debug = True
         matches = 0
         fixes = {"US;":"Q30", "Germany;":"Q183", "United Kingdom;": "Q145", "Netherlands;":"Q29999", "Norway;":"Q20", "Holy See;":"Q237", "Korea, South;":"Q884", "Taiwan*;":"Q57251",
                  "Denmark;Greenland":"Q223",
@@ -155,12 +155,19 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # exotic case Cruise ship with lat/lon - in Oakland California ...
                  "Canada;Grand Princess":"Q99"
         }
-        regionByWikiDataId = {}
-        for iregion in Region.regions:
-            regionByWikiDataId[iregion.wikiDataId] = iregion
+        isoRegionsByWikiDataId = {}
+        for iregion in ISORegion.regions:
+            isoRegionsByWikiDataId[iregion.wikiDataId] = iregion
         for region in cases.regions.values():
-            matches = matches + region.matchIsoRegion(regionByWikiDataId, fixes)
+            matches = matches + region.matchIsoRegion(isoRegionsByWikiDataId, fixes)
         print ("found %3d matches" % (matches))    
+        gfile = "jhuregions.xml"
+        cachefile=TinkerPopAble.cache(self.rg, gfile, Region, cases.regions.values(), self.void)  
+        self.assertTrue(os.path.isfile(cachefile),cachefile)
+    
+    def void(self):
+        # do nothing
+        pass
             
     def testProjection(self):
         '''

@@ -3,6 +3,7 @@ import csv
 import requests
 import datetime
 from jhu.loc import Distance
+from tp.gremlin import TinkerPopAble
 
 #https://stackoverflow.com/a/35371451/1497139
 
@@ -34,16 +35,16 @@ class COVIDCases():
                         for regionRow in regionRows:
                             if not firstRow:
                                 region=Region(ts,regionRow)
-                                self.regions[region.key]=region
+                                self.regions[region.rowkey]=region
                             firstRow=False    
                     firstRow=True        
                     for regionRow in regionRows:
                         if not firstRow:
                             keyRegion=Region(ts,regionRow)
-                            if keyRegion.key not in self.regions:
-                                print ("key %s kind %s area %s invalid row %s" % (keyRegion.key,kind,area,regionRow))
+                            if keyRegion.rowkey not in self.regions:
+                                print ("key %s kind %s area %s invalid row %s" % (keyRegion.rowkey,kind,area,regionRow))
                             else:    
-                                region=self.regions[keyRegion.key]
+                                region=self.regions[keyRegion.rowkey]
                                 region.fillTimeSeries(ts, regionRow, kind)
                         firstRow=False    
             firstKind=False     
@@ -94,7 +95,7 @@ class Avg():
         self.value=self.sum/self.count   
         return self.value           
                 
-class Region():
+class Region(TinkerPopAble):
     '''
     a region entry in the time series
     '''
@@ -119,14 +120,18 @@ class Region():
         self.lon=0
         self.latAvg=Avg()
         self.lonAvg=Avg()
+        self.wikiDataId=None
+        self.isocode=None
+        self.pop=None
         # uncomment to debug
         # print(ts.headers)
         # print(row)
         try:
             self.province=self.getField(ts,row,['Province_State','Province/State'])
             self.country=self.getField(ts,row,['Country_Region','Country/Region'])
-            self.key="%s;%s" % (self.country,self.province)
+            self.rowkey="%s;%s" % (self.country,self.province)
             self.getLocation(ts, row)
+            self.storeFields(["lat","lon","province","country","rowkey","pop","isocode","wikiDataId"])
         except ValueError as ve: 
             print (ve)
             raise ve
@@ -174,7 +179,7 @@ class Region():
         '''
         find the best matching region with IsoCode and population and copy it's data
         '''
-        fixname=self.key
+        fixname=self.rowkey
         #print ("'%s'" % (fixname))
         if fixname in fixes:
             self.wikiDataId=fixes[fixname]

@@ -19,7 +19,7 @@ class WikiData:
         location=location.replace(' ',',')
         return location    
     
-class Region(TinkerPopAble):
+class ISORegion(TinkerPopAble):
     '''
     get region info from wikidata
     '''
@@ -121,7 +121,7 @@ WHERE
 }'''
         res = return_sparql_query_results(sparql)
         for record in (res['results']['bindings']):
-            Region.regions.append(Region(record))
+            ISORegion.regions.append(ISORegion(record))
             
     def __init__(self, record=None):
         '''
@@ -157,7 +157,7 @@ WHERE
         '''
         create a Region from the given map
         '''
-        region=Region()
+        region=ISORegion()
         region.fromMap(pMap)
         return region        
         

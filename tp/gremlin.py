@@ -62,6 +62,15 @@ class TinkerPopAble(object):
     '''
     debug=False
     
+    def storeFields(self,fieldList):
+        '''
+        define the fields to be stored as tinkerpop vertice properties
+        '''
+        self.tpfields={}
+        fields=vars(self)
+        for field in fieldList:
+            self.tpfields[field]=fields[field]
+    
     def toVertex(self,g):
         '''
         create a vertex from me
@@ -70,10 +79,17 @@ class TinkerPopAble(object):
         t=g.addV(label)
         if TinkerPopAble.debug:
             print(label)
-        for name,value in vars(self).items():
+        # if there is a pre selection of fields store only these
+        if hasattr(self,'tpfields'):
+            tpfields=self.tpfields    
+        else:
+            # else use all fields
+            tpfields=vars(self)
+        for name,value in tpfields.items():
             if TinkerPopAble.debug:
                 print("\t%s=%s" % (name,value))
-            t=t.property(name,value)
+            if value is not None:    
+                t=t.property(name,value)
         t.iterate()    
         
     def fromMap(self,pMap):
@@ -89,8 +105,9 @@ class TinkerPopAble(object):
         generic save
         '''
         g=rg.g
+        cachefile=rg.sharepoint+gfile
         clazzname=clazz.__name__
-        if os.path.isfile(rg.sharepoint+gfile):
+        if os.path.isfile(cachefile):
             g.io(rg.sharepath+gfile).read().iterate()
             for pMap in g.V().hasLabel(clazzname).valueMap().toList():
                 if TinkerPopAble.debug:
@@ -105,6 +122,6 @@ class TinkerPopAble(object):
                 if TinkerPopAble.debug:
                     print(instance)
                 instance.toVertex(g)
-            g.io(rg.sharepath+gfile).write().iterate()    
-        pass        
+            g.io(rg.sharepath+gfile).write().iterate()
+        return cachefile
     
