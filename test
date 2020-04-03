@@ -1,0 +1,14 @@
+#!/bin/bash
+# WF 2020-04-03
+# test
+if [ ! -d $HOME/graphdata ]
+then
+  mkdir $HOME/graphdata
+fi
+# start janusgraph in docker image in background
+docker run -i -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph&
+
+./install
+
+./waitport gremlin localhost 8182
+python3 -m unittest discover

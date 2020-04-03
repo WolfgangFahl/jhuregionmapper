@@ -9,7 +9,7 @@ echo "Waiting for $cmd to launch on $host:$port..."
 
 while ! nc -z $host $port; do
   sleep 1 # wait for 1/10 of the second before check again
-  echo
+  echo -n "."
 done
 
 echo "$cmd launched"
