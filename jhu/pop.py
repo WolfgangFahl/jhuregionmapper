@@ -149,7 +149,8 @@ WHERE
             self.lon,self.lat=self.location.split(",")
             self.lon=float(self.lon)
             self.lat=float(self.lat)
-            self.coords=Projection.pointToXy(self.location)
+            coords=Projection.pointToXy(self.location)
+            self.x,self.y=coords
         
     @staticmethod
     def ofMap(pMap):
