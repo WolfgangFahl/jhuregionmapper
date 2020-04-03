@@ -26,7 +26,7 @@ in my environment i am running janusgraph on our ubuntu server so that /bitplan/
 When first run the region information is cached in a graphml file region.xml which takes roughly a minute to create.
 Later the region data is read from the graphml based tinkerpop graphdatabase.
 
-The matching result currently works for the global data for some 251 regions.
+The matching result currently works for the global and US data for some 310 regions.
 <pre>
 ✅                      Afghanistan                                    33.0,  65.0 -  145 km->    AF;     Q889;                                Afghanistan;   34940837;  34.0;  66.0
 ✅                          Albania                                    41.2,  20.2 -   22 km->    AL;     Q222;                                    Albania;    3020209;  41.0;  20.0
