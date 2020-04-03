@@ -13,7 +13,6 @@ from jhu.jhu import COVIDCases
 from jhu.jhu import Region as TRegion
 from jhu.loc import Projection
 
-
 class JohnsHopkinsRegionMappingTest(unittest.TestCase):
     '''
     test mapping johns hopkins covid-19 data province/country region mapping
@@ -76,7 +75,10 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         self.clean()
         g = self.rg.g
         graphmlFile = "air-routes-small.xml";
-        shared = self.rg.share(graphmlFile)
+        for path in [".","test"]:
+            graphmlPath=path+"/"+graphmlFile
+            if os.path.isfile(graphmlPath):
+                shared = self.rg.share(graphmlPath)
         # read the content from the air routes example
         g.io(shared).read().iterate()
         vCount = g.V().count().next()
@@ -116,7 +118,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         #    print (date)
         print("%d regions" % len(cases.regions))
         for region in cases.regions.values():
-            print ("%35s:%35s %6.1f %6.1f" % (region.country, region.province, region.lat, region.lon))
+            print ("%35s:%35s %6.1f %6.1f %6d %6d" % (region.country, region.province, region.lat, region.lon,region.total("confirmed"),region.total("deaths")))
             pass
         
     def test_MatchRegions(self):

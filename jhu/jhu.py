@@ -114,6 +114,7 @@ class Region():
         self.confirmed={}
         self.deaths={}
         self.recovered={}
+        self.ts=ts
         self.lat=0
         self.lon=0
         self.latAvg=Avg()
@@ -129,6 +130,11 @@ class Region():
         except ValueError as ve: 
             print (ve)
             raise ve
+        
+    def total(self,name):    
+        attrList=self.__getattribute__(name)
+        currentDate=self.ts.dates[len(self.ts.dates)-1]
+        return attrList[currentDate]
     
     def getLocation(self,ts,row):    
         lat=float(self.getField(ts,row,['Lat']))
@@ -143,7 +149,7 @@ class Region():
         for col in range(len(ts.headers),len(row)):
             attrList=self.__getattribute__(name)
             date=ts.dates[col-len(ts.headers)]
-            value=row[col]
+            value=int(row[col])
             if date in attrList:
                 attrList[date]=attrList[date]+value
             else:

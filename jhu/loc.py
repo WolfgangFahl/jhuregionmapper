@@ -5,9 +5,13 @@ class Projection:
     '''
     helper to project lat/lon values to map
     '''
+    e4326=Proj(init='epsg:4326')
+    e3857=Proj(init='epsg:3857')
     @staticmethod
     def wgsToXy(lon,lat):
-        return transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), lon,lat)
+        t1=transform(Projection.e4326,Projection.e3857, lon,lat)
+        #t2=transform(Proj('epsg:4326'), Proj('epsg:3857'), lon,lat)
+        return t1
     
     @staticmethod
     def pointToXy(point):
