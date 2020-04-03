@@ -131,7 +131,7 @@ class Region(TinkerPopAble):
             self.country=self.getField(ts,row,['Country_Region','Country/Region'])
             self.rowkey="%s;%s" % (self.country,self.province)
             self.getLocation(ts, row)
-            self.storeFields(["lat","lon","province","country","rowkey","pop","isocode","wikiDataId"])
+            self.storeFields(["lat","lon","province","country","rowkey"])
         except ValueError as ve: 
             print (ve)
             raise ve
@@ -201,6 +201,7 @@ class Region(TinkerPopAble):
             self.isocode=minregion.isocode
             self.pop=minregion.pop
             self.wikiDataId=minregion.wikiDataId
+            self.storeFields(["pop","isocode","wikiDataId"])
             # if close enough assume correct e.g. on French/Netherlands islands it doesn't really matter which region is shown
             if mindist<=83:
                 self.match=1

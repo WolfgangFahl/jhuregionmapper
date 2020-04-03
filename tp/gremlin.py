@@ -66,7 +66,8 @@ class TinkerPopAble(object):
         '''
         define the fields to be stored as tinkerpop vertice properties
         '''
-        self.tpfields={}
+        if not hasattr(self,'tpfields'):
+            self.tpfields={}
         fields=vars(self)
         for field in fieldList:
             self.tpfields[field]=fields[field]
