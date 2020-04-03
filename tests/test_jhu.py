@@ -107,7 +107,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData)  
         # we check the number of regions expected here - please adapt if the
         # SPARQL query or WikiData content changes
-        self.assertEquals(424, len(Region.regions))
+        self.assertEquals(422, len(Region.regions))
         self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
         pass    
     
