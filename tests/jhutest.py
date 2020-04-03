@@ -4,7 +4,9 @@ Created on 2020-03-28
 @author: wf
 '''
 import unittest
+import getpass
 import os
+from pathlib import Path
 from tp.gremlin import RemoteGremlin, TinkerPopAble
 from jhu.pop import Region
 from jhu.jhu import TimeSeries
@@ -12,28 +14,52 @@ from jhu.jhu import Region as TRegion
 from jhu.loc import Projection
 
 
-class JanusGraphTest(unittest.TestCase):
+class JohnsHopkinsRegionMappingTest(unittest.TestCase):
     '''
-    test access to a janus graph docker instance via the RemoteGremlin helper class
+    test mapping johns hopkins covid-19 data province/country region mapping
+    via access to a janus graph docker instance using the RemoteGremlin helper class
     '''
 
     def setUp(self):
-        self.rg = RemoteGremlin("capri.bitplan.com")
+        '''
+        setUp the environment for the test
+        '''
+        # default server for janusgraph instance
+        self.gremlinserver="localhost"
+        # default sharepoint 
+        self.sharepoint=str(Path.home())+"/graphdata"
+        # developer's environment
+        # adapt to your own username and needs
+        if getpass.getuser()=="wf":
+            self.gremlinsverer="capri.bitplan.com"
+            self.sharepoint="/Volumes/bitplan/user/wf/graphdata/"
+        # open the remote gremlin connection and set up the share point    
+        self.rg = RemoteGremlin(self.gremlinserver)
         self.rg.open()
-        self.rg.sharepoint("/Volumes/bitplan/user/wf/graphdata/", "/graphdata/")
+        self.rg.sharepoint(self.sharepoint, "/graphdata/")
         pass
 
     def tearDown(self):
+        '''
+        after finishing close the remote connection
+        '''
         self.rg.close()
         pass
     
     def clean(self):
+        '''
+        clean the graph database by removing all edges and vertices
+        '''
         # get the vertices
         gV = self.rg.g.V()
         # drop the existing content of the graph
+        gV.E().drop().iterate()
         gV.V().drop().iterate()
     
     def testJanusGraph(self):
+        '''
+        test communication to janus Graph
+        '''
         self.clean()
         # we have a traversal now
         # assert isinstance(gV,GraphTraversal)
@@ -43,7 +69,24 @@ class JanusGraphTest(unittest.TestCase):
         assert len(vList) == 0
         pass
     
+    def test_loadGraph(self):
+        '''
+        test loading a graph ml database
+        '''
+        self.clean()
+        g = self.rg.g
+        graphmlFile = "air-routes-small.xml";
+        shared = self.rg.share(graphmlFile)
+        # read the content from the air routes example
+        g.io(shared).read().iterate()
+        vCount = g.V().count().next()
+        print ("%s has %d vertices" % (shared, vCount))
+        assert vCount == 47
+    
     def test_saveGraph(self):
+        '''
+        test saving a simple graph with a single vertex to a graphml file
+        '''
         self.clean()
         g = self.rg.g
         g.addV("country").property("name", "Germany").iterate()
@@ -53,23 +96,26 @@ class JanusGraphTest(unittest.TestCase):
         
     def test_CacheRegion(self):
         '''
-        test caching region information
+        test caching region information retrieved from WikiData via a SPARQL query
         '''
         self.clean()
         gfile = "region.xml"
         TinkerPopAble.cache(self.rg, gfile, Region, Region.regions, Region.fromWikiData)  
+        # we check the number of regions expected here - please adapt if the
+        # SPARQL query or WikiData content changes
         self.assertEquals(415, len(Region.regions))
         self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
         pass    
     
     def test_JHU_Regions(self):
-        ''' test the names from John Hopkins university time series data '''
+        ''' test getting the names from John Hopkins university 
+        time series data country and province'''
         ts = TimeSeries()
         # for date in ts.dates:
         #    print (date)
         print("%d regions" % len(ts.regions))
         for region in ts.regions:
-            print ("%s:%s %4.1f %4.1f" % (region.country, region.province, region.lat, region.lon))
+            print ("%21s:%20s %4.1f %4.1f" % (region.country, region.province, region.lat, region.lon))
             pass
         
     def test_MatchRegions(self):
@@ -108,18 +154,10 @@ class JanusGraphTest(unittest.TestCase):
             matches = matches + region.matchIsoRegion(regionByWikiDataId, fixes)
         print ("found %3d matches" % (matches))    
             
-    def test_loadGraph(self):
-        self.clean()
-        g = self.rg.g
-        graphmlFile = "air-routes-small.xml";
-        shared = self.rg.share(graphmlFile)
-        # read the content from the air routes example
-        g.io(shared).read().iterate()
-        vCount = g.V().count().next()
-        print ("%s has %d vertices" % (shared, vCount))
-        assert vCount == 47
-        
     def testProjection(self):
+        '''
+        test the mercator projection
+        '''
         point="-0.1285907, 51.50809"
         coords=Projection.pointToXy(point)
         print(coords)
