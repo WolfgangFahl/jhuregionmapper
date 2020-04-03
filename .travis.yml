@@ -1,4 +1,4 @@
-# tries avoiding Error: remove_overlap: Graphviz not built with triangulation library
+# ubuntu version
 dist: bionic
 # see https://docs.travis-ci.com/user/languages/python/
 language: python
@@ -18,7 +18,7 @@ before_install:
   # check version
   - lsb_release -a
   # start janusgraph
-  docker run -it -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph
+  - docker run -it -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph
 
 # command to install python dependencies
 install:
