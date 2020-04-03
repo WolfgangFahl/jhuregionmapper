@@ -12,6 +12,7 @@ class RemoteGremlin(object):
     '''
     helper for remote gremlin connections
     '''
+    debug=False
 
     def __init__(self, server, port=8182):
         '''
@@ -33,7 +34,10 @@ class RemoteGremlin(object):
         share the given file  and return the path as seen by the server
         '''
         fbase=os.path.basename(file)
-        copyfile(file,self.sharepoint+fbase)
+        target=self.sharepoint+fbase
+        if RemoteGremlin.debug:
+            print("copying %s to %s" % (file,target))
+        copyfile(file,target)
         return self.sharepath+fbase
             
     def open(self):

@@ -23,6 +23,8 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         '''
         setUp the environment for the test
         '''
+        # uncomment if you'd like to debug parts of the tests
+        RemoteGremlin.debug=True
         # default server for janusgraph instance
         self.gremlinserver="localhost"
         # default sharepoint 
