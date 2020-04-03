@@ -119,9 +119,19 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # for date in ts.dates:
         #    print (date)
         print("%d regions" % len(cases.regions))
-        for region in cases.regions.values():
-            print ("%35s:%35s %6.1f %6.1f %6d %6d" % (region.country, region.province, region.lat, region.lon,region.total("confirmed"),region.total("deaths")))
+        sortedRegions=sorted(cases.regions.values(),key=lambda r:r.total("confirmed"))
+        csum=0
+        dsum=0
+        for region in sortedRegions:
+            c=region.total("confirmed")
+            d=region.total("deaths")
+            csum=csum+c
+            dsum=dsum+d
+            ratio=c/d if d>0 else -1 
+            print ("%35s:%35s %6.1f %6.1f %9d %8d %5.1f"  % (region.country, region.province, region.lat, region.lon,c,d,ratio))
             pass
+        # incorrect sum ...
+        #print ("%71s %13s %9d %8d %5.1f" % ("global","",csum,dsum,csum/dsum))
         
     def test_MatchRegions(self):
         '''
