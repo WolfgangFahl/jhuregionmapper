@@ -6,7 +6,7 @@ case $os in
    install="sudo port install"
    ;;
   *)
-   pip="pip3"
+   pip="sudo -H pip3"
    if [ "$USER" = "travis" ]
    then
      # https://stackoverflow.com/a/20621143/1497139

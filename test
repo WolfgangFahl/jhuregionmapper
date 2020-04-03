@@ -1,10 +1,13 @@
 #!/bin/bash
 # WF 2020-04-03
 # test
-if [ ! -d $HOME/graphdata ]
+share=$HOME/graphdata
+if [ ! -d $share ]
 then
-  mkdir $HOME/graphdata
+  mkdir $share 
 fi
+sudo chgrp docker $share
+sudo chmod g+w $share 
 # start janusgraph in docker image in background
 rm nohup.out
 nohup docker run -i -p 8182:8182 --mount src=$HOME/graphdata,target=/graphdata,type=bind janusgraph/janusgraph&
