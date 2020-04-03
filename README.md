@@ -3,6 +3,12 @@ Maps Johns Hopkins University COVID-19 regions to iso country and region code an
 
 see https://github.com/CSSEGISandData/COVID-19/issues/1908
 
+[![Travis (.org)](https://img.shields.io/travis/WolfgangFahl/jhuregionmapper.svg)](https://travis-ci.org/WolfgangFahl/jhuregionmapper)
+[![GitHub issues](https://img.shields.io/github/issues/WolfgangFahl/jhuregionmapper.svg)](https://github.com/WolfgangFahl/jhuregionmapper/issues)
+[![GitHub issues](https://img.shields.io/github/issues-closed/WolfgangFahl/jhuregionmapper.svg)](https://github.com/WolfgangFahl/jhuregionmapper/issues/?q=is%3Aissue+is%3Aclosed)
+[![GitHub](https://img.shields.io/github/license/WolfgangFahl/jhuregionmapper.svg)](https://opensource.org/licenses/MIT)
+
+
 # Installation
 The software is written in Python and uses JanusGraph and Apache Tinkerpop
 
@@ -275,3 +281,6 @@ The matching result currently works for the global data for some 251 regions.
 ✅                Burundi                        -3.4,  29.9 -   34 km->    BI;     Q967;                                 Burundi; 10864245;  -3.7;  29.8
 ✅           Sierra Leone                         8.5, -11.8 -   16 km->    SL;    Q1044;                            Sierra Leone;  7557212;   8.5; -11.9
 </pre>
+
+### Authors
+* [Wolfgang Fahl](http://www.bitplan.com/Wolfgang_Fahl)
