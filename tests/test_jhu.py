@@ -166,9 +166,11 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         '''
         point="-0.1285907, 51.50809"
         coords=Projection.pointToXy(point)
-        print(coords)
+        x1,y1=coords
         coords=Projection.wgsToXy(-0.1285907, 51.50809) # longitude first, latitude second.
-        print(coords)    
+        x2,y2=(coords)
+        self.assertEquals(x1,x2) 
+        self.assertEquals(y1,y2)   
 
 
 if __name__ == "__main__":
