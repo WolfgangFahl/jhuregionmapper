@@ -6,7 +6,7 @@ Created on 2020-03-28
 import unittest
 import os
 from tp.gremlin import RemoteGremlin, TinkerPopAble
-from jhu.pop import Population, Region
+from jhu.pop import Region
 from jhu.jhu import TimeSeries
 from jhu.jhu import Region as TRegion
 from jhu.loc import Projection
@@ -49,16 +49,6 @@ class JanusGraphTest(unittest.TestCase):
         g.addV("country").property("name", "Germany").iterate()
         gfile = "countries.xml"
         g.io(self.rg.sharepath + gfile).write().iterate()
-        self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
-        
-    def test_cachePopulation(self):
-        '''
-        test caching the population
-        '''
-        self.clean()
-        gfile = "population.xml"
-        TinkerPopAble.cache(self.rg, gfile, Population, Population.pops, Population.fromWikiData)  
-        self.assertEquals(90, len(Population.pops))
         self.assertTrue(os.path.isfile(self.rg.sharepoint + gfile))
         
     def test_CacheRegion(self):
