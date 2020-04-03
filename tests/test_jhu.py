@@ -28,7 +28,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # default server for janusgraph instance
         self.gremlinserver="localhost"
         # default sharepoint 
-        self.sharepoint=str(Path.home())+"/graphdata"
+        self.sharepoint=str(Path.home())+"/graphdata/"
         # developer's environment
         # adapt to your own username and needs
         if getpass.getuser()=="wf":
