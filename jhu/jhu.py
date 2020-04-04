@@ -11,8 +11,9 @@ class COVIDCases():
     '''
     raw time series csv data of Johns  Hopkins University at https://github.com/CSSEGISandData/COVID-19
     '''
-    BASE_URL="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
-
+    
+    BASE_URL_TIMESERIES="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
+    BASE_URL_REPORTS="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
     def __init__(self,cachedRegions=None):
         '''
         construct me
@@ -31,7 +32,7 @@ class COVIDCases():
             for area in ["global","US"]:
                 csv="time_series_covid19_%s_%s.csv" % (kind,area)
                 if not (kind=="recovered" and area=="US"):
-                    ts=TimeSeries(COVIDCases.BASE_URL+csv)
+                    ts=TimeSeries(COVIDCases.BASE_URL_TIMESERIES+csv)
                     regionRows=ts.readCSV()
                     if firstKind:
                         firstRow=True

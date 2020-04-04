@@ -175,9 +175,15 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         coords=Projection.wgsToXy(-0.1285907, 51.50809) # longitude first, latitude second.
         x2,y2=(coords)
         self.assertEquals(x1,x2) 
-        self.assertEquals(y1,y2)   
+        self.assertEquals(y1,y2) 
         
     def testMap(self):
+        date="04-02-2020"
+        wmap=WorldMap("COVID-19 cases "+date)      
+        #wmap.sample()
+        wmap.directFromCSV(date)
+        
+    def testPMap(self):
         '''
         test creating a map view
         '''
