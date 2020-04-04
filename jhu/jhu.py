@@ -84,7 +84,7 @@ class COVIDCases():
                 print ("%35s:%35s %6.1f %6.1f %9d %8d %5.1f"  % (region.country, region.province, region.lat, region.lon,c,d,dratio))
             pass
         # incorrect sum ...
-        if iso:
+        if iso and csum>0:
             cratio=psum/csum
             dratio=csum/dsum
             wpop=7800000000
