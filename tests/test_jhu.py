@@ -178,10 +178,11 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         self.assertEquals(y1,y2) 
         
     def testMap(self):
-        date="04-02-2020"
-        wmap=WorldMap("COVID-19 cases "+date)      
-        #wmap.sample()
-        wmap.directFromCSV(date)
+        if getpass.getuser()!="travis":
+            date="04-02-2020"
+            wmap=WorldMap("COVID-19 cases "+date)      
+            #wmap.sample()
+            wmap.directFromCSV(date)
         
     def testPMap(self):
         '''
