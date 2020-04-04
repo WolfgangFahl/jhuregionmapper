@@ -12,6 +12,7 @@ from jhu.pop import ISORegion
 from jhu.jhu import COVIDCases
 from jhu.jhu import Region
 from jhu.loc import Projection
+from jhu.map import WorldMap
 
 class JohnsHopkinsRegionMappingTest(unittest.TestCase):
     '''
@@ -116,22 +117,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         time series data country and province'''
         cases = COVIDCases()
         cases.downloadAll()
-        # for date in ts.dates:
-        #    print (date)
-        print("%d regions" % len(cases.regions))
-        sortedRegions=sorted(cases.regions.values(),key=lambda r:r.total("confirmed"))
-        csum=0
-        dsum=0
-        for region in sortedRegions:
-            c=region.total("confirmed")
-            d=region.total("deaths")
-            csum=csum+c
-            dsum=dsum+d
-            ratio=c/d if d>0 else -1 
-            print ("%35s:%35s %6.1f %6.1f %9d %8d %5.1f"  % (region.country, region.province, region.lat, region.lon,c,d,ratio))
-            pass
-        # incorrect sum ...
-        #print ("%71s %13s %9d %8d %5.1f" % ("global","",csum,dsum,csum/dsum))
+        cases.display()
         
     def test_MatchRegions(self):
         '''
@@ -190,6 +176,31 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         x2,y2=(coords)
         self.assertEquals(x1,x2) 
         self.assertEquals(y1,y2)   
+        
+    def testMap(self):
+        '''
+        test creating a map view
+        '''
+        gfile = "jhuregions.xml"
+        regions=[]
+        TinkerPopAble.cache(self.rg, gfile, Region, regions, self.void)  
+        cases = COVIDCases(regions)
+        cases.downloadAll()
+        cases.display(False)
+        cases.display(True)
+        worldmap=WorldMap("COVID-19 cases")
+        #worldmap.sample()
+        for casestep in [10,100,1000,10000,100000,1000000]:
+            stepmap={}
+            for region in cases.regions.values():
+                if region.isocode is not None and len(region.isocode)==2 and region.province!="District of Columbia":
+                    c=region.total("confirmed")
+                    if c>=casestep and c<casestep*10:
+                        stepmap[region.isocode.lower()]=c            
+            worldmap.wmap.add(str(casestep),stepmap)
+        svgfile="/tmp/cases.png"
+        worldmap.render(svgfile)
+        self.assertTrue(os.path.isfile(svgfile))
 
 
 if __name__ == "__main__":

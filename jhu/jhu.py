@@ -13,11 +13,14 @@ class COVIDCases():
     '''
     BASE_URL="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
 
-    def __init__(self):
+    def __init__(self,cachedRegions=None):
         '''
         construct me
         '''
         self.regions={}
+        if cachedRegions is  not None:
+            for region in cachedRegions:
+                self.regions[region.rowkey]=region
         
     def downloadAll(self):
         '''
@@ -35,7 +38,11 @@ class COVIDCases():
                         for regionRow in regionRows:
                             if not firstRow:
                                 region=Region(ts,regionRow)
-                                self.regions[region.rowkey]=region
+                                if not region.rowkey in self.regions:
+                                    self.regions[region.rowkey]=region
+                                else:
+                                    # add the time series
+                                    self.regions[region.rowkey].ts=region.ts    
                             firstRow=False    
                     firstRow=True        
                     for regionRow in regionRows:
@@ -47,7 +54,28 @@ class COVIDCases():
                                 region=self.regions[keyRegion.rowkey]
                                 region.fillTimeSeries(ts, regionRow, kind)
                         firstRow=False    
-            firstKind=False     
+            firstKind=False  
+    
+    def display(self,iso=False):        
+        print("%d regions" % len(self.regions))
+        sortedRegions=sorted(self.regions.values(),key=lambda r:r.total("confirmed"))
+        csum=0
+        dsum=0
+        for region in sortedRegions:
+            c=region.total("confirmed")
+            d=region.total("deaths")
+            csum=csum+c
+            dsum=dsum+d
+            pop=-1 if region.pop is None else int(region.pop)
+            cratio=pop/c if c>0 else -1
+            dratio=c/d if d>0 else -1 
+            if iso:
+                print ("%6s: %10d %9d %7.0f %8d %5.1f" % (region.isocode,pop,c,cratio,d,dratio))
+            else:
+                print ("%35s:%35s %6.1f %6.1f %9d %8d %5.1f"  % (region.country, region.province, region.lat, region.lon,c,d,dratio))
+            pass
+        # incorrect sum ...
+        #print ("%71s %13s %9d %8d %5.1f" % ("global","",csum,dsum,csum/dsum))           
             
 class TimeSeries():
     '''
@@ -110,8 +138,8 @@ class Region(TinkerPopAble):
                 return row[ts.headers[key]]
         return None   
     
-    def __init__(self,ts,row):
-        ''' construct me from the given row '''
+    def __init__(self,ts=None,row=None):
+        ''' construct me from the timeseries and given row '''
         self.confirmed={}
         self.deaths={}
         self.recovered={}
@@ -123,6 +151,8 @@ class Region(TinkerPopAble):
         self.wikiDataId=None
         self.isocode=None
         self.pop=None
+        if ts is None or row is None:
+            return
         # uncomment to debug
         # print(ts.headers)
         # print(row)
@@ -212,7 +242,16 @@ class Region(TinkerPopAble):
             if Region.debug:        
                 marker="?" if self.match==0 else "✅"
             print ("%s %s - %4.0f km->%s" % (marker,self,mindist,minregion))    
-        return self.match        
+        return self.match      
+    
+    @staticmethod
+    def ofMap(pMap):
+        '''
+        create a Region from the given map
+        '''
+        region=Region()
+        region.fromMap(pMap)
+        return region          
             
     def __str__(self):
         text= ("%32s %32s %6.1f,%6.1f" % (self.country,self.province,self.lat,self.lon))    

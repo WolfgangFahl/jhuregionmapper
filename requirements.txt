@@ -7,3 +7,9 @@ qwikidata
 pyproj
 #https://pypi.org/project/geopy/
 geopy
+# http://www.pygal.org/en/stable/installing.html
+pygal
+# http://www.pygal.org/en/stable/documentation/types/maps/pygal_maps_world.html
+pygal_maps_world
+# https://pypi.org/project/CairoSVG/
+CairoSVG
