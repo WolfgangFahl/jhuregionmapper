@@ -14,7 +14,7 @@ The software is written in Python and uses JanusGraph and Apache Tinkerpop
 
 see http://wiki.bitplan.com/index.php/Gremlin_python
 
-To start your janusgraph 
+To start your janusgraph
 
 `docker run -it -p 8182:8182 --mount src=<path to graphdata>,target=/graphdata,type=bind janusgraph/janusgraph`
 
@@ -28,6 +28,7 @@ Later the region data is read from the graphml based tinkerpop graphdatabase.
 
 The matching result currently works for the global and US data for some 310 regions.
 <pre>
+                            Country                       Province     Lat,   Lon - distance -> ISO;  WikiDataId;  WikiLabel;Population;Lat;Lon
 ✅                      Afghanistan                                    33.0,  65.0 -  145 km->    AF;     Q889;                                Afghanistan;   34940837;  34.0;  66.0
 ✅                          Albania                                    41.2,  20.2 -   22 km->    AL;     Q222;                                    Albania;    3020209;  41.0;  20.0
 ✅                          Algeria                                    28.0,   1.7 -   65 km->    DZ;     Q262;                                    Algeria;   41318142;  28.0;   1.0
