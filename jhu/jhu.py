@@ -34,6 +34,7 @@ class COVIDCases():
                 if not (kind=="recovered" and area=="US"):
                     ts=TimeSeries(COVIDCases.BASE_URL_TIMESERIES+csv)
                     regionRows=ts.readCSV()
+                    self.currentDate=ts.currentDate  
                     if firstKind:
                         firstRow=True
                         for regionRow in regionRows:
@@ -56,27 +57,41 @@ class COVIDCases():
                                 region.fillTimeSeries(ts, regionRow, kind)
                         firstRow=False    
             firstKind=False  
+          
     
-    def display(self,iso=False):        
+    def display(self,iso=False):      
+        '''
+        display the regions via console
+        '''  
         print("%d regions" % len(self.regions))
         sortedRegions=sorted(self.regions.values(),key=lambda r:r.total("confirmed"))
         csum=0
         dsum=0
+        psum=0
         for region in sortedRegions:
             c=region.total("confirmed")
             d=region.total("deaths")
-            csum=csum+c
-            dsum=dsum+d
+            if iso and region.pop is not None:
+                    csum=csum+c
+                    dsum=dsum+d
+                    psum=psum+int(region.pop)
             pop=-1 if region.pop is None else int(region.pop)
             cratio=pop/c if c>0 else -1
             dratio=c/d if d>0 else -1 
             if iso:
-                print ("%6s: %10d %9d %7.0f %8d %5.1f" % (region.isocode,pop,c,cratio,d,dratio))
+                print ("%6s: %11d %9d %7.0f %8d %5.1f" % (region.isocode,pop,c,cratio,d,dratio))
             else:
                 print ("%35s:%35s %6.1f %6.1f %9d %8d %5.1f"  % (region.country, region.province, region.lat, region.lon,c,d,dratio))
             pass
         # incorrect sum ...
-        #print ("%71s %13s %9d %8d %5.1f" % ("global","",csum,dsum,csum/dsum))           
+        if iso:
+            cratio=psum/csum
+            dratio=csum/dsum
+            wpop=7800000000
+            factor=wpop/psum
+            print ("sums are incorrect due to duplicates - rough estimate by global population")
+            print ("%6s: %11d %9d %7.0f %8d %5.1f" % ("Σ <",psum,csum,cratio,dsum,dratio))           
+            print ("%6s: %11d %9d %7.0f %8d %5.1f" % ("Σ ~",wpop,csum*factor,cratio,dsum*factor,dratio))           
             
 class TimeSeries():
     '''
@@ -92,7 +107,7 @@ class TimeSeries():
         
     def readCSV(self):    
         '''
-        download the given 
+        download my timeseries from my csvurl
         '''
         with requests.Session() as s:
             download = s.get(self.csvurl)
@@ -108,6 +123,7 @@ class TimeSeries():
                     self.dates.append(isodate)
                 except ValueError:
                     self.headers[colValue]=col   
+            self.currentDate=self.dates[len(self.dates)-1]        
         return regionRows 
 
 class Avg():
@@ -169,8 +185,7 @@ class Region(TinkerPopAble):
         
     def total(self,name):    
         attrList=self.__getattribute__(name)
-        currentDate=self.ts.dates[len(self.ts.dates)-1]
-        return attrList[currentDate]
+        return attrList[self.ts.currentDate]
     
     def getLocation(self,ts,row):    
         lat=float(self.getField(ts,row,['Lat']))

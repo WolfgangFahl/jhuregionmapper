@@ -196,7 +196,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         cases.downloadAll()
         cases.display(False)
         cases.display(True)
-        worldmap=PWorldMap("COVID-19 cases")
+        worldmap=PWorldMap("COVID-19 cases "+cases.currentDate)
         #worldmap.sample()
         for casestep in [10,100,1000,10000,100000,1000000]:
             stepmap={}
@@ -205,11 +205,14 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
                     c=region.total("confirmed")
                     if c>=casestep and c<casestep*10:
                         stepmap[region.isocode.lower()]=c            
-            worldmap.wmap.add(str(casestep),stepmap)
+            worldmap.wmap.add(">"+str(casestep),stepmap)
         svgfile="/tmp/cases.png"
         worldmap.render(svgfile)
         self.assertTrue(os.path.isfile(svgfile))
-
+        if getpass.getuser()=="wf":
+            worldmap.render()    
+            
+     
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
