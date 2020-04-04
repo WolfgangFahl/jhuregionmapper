@@ -13,6 +13,7 @@ from jhu.jhu import COVIDCases
 from jhu.jhu import Region
 from jhu.loc import Projection
 from jhu.map import WorldMap
+from jhu.pygalmap import PWorldMap
 
 class JohnsHopkinsRegionMappingTest(unittest.TestCase):
     '''
@@ -195,7 +196,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         cases.downloadAll()
         cases.display(False)
         cases.display(True)
-        worldmap=WorldMap("COVID-19 cases")
+        worldmap=PWorldMap("COVID-19 cases")
         #worldmap.sample()
         for casestep in [10,100,1000,10000,100000,1000000]:
             stepmap={}

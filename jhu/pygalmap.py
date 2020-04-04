@@ -6,7 +6,7 @@ Created on 2020-04-04
 from pygal_maps_world.maps import World
 
 
-class WorldMap(object):
+class PWorldMap(object):
     '''
     classdocs
     '''
