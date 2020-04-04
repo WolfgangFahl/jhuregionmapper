@@ -28,7 +28,7 @@ Later the region data is read from the graphml based tinkerpop graphdatabase.
 
 The matching result currently works for the global and US data for some 310 regions.
 <pre>
-                            Country                       Province     Lat,   Lon - distance -> ISO;  WikiDataId;  WikiLabel;Population;Lat;Lon
+                            Country                       Province     Lat,   Lon  - dist  -> ISO;  WikiData;                  WikiLabel;Population;Lat;Lon
 ✅                      Afghanistan                                    33.0,  65.0 -  145 km->    AF;     Q889;                                Afghanistan;   34940837;  34.0;  66.0
 ✅                          Albania                                    41.2,  20.2 -   22 km->    AL;     Q222;                                    Albania;    3020209;  41.0;  20.0
 ✅                          Algeria                                    28.0,   1.7 -   65 km->    DZ;     Q262;                                    Algeria;   41318142;  28.0;   1.0
