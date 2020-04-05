@@ -108,10 +108,10 @@ class TinkerPopAble(object):
             
     @staticmethod
     def writeCSV(csvfileName,objectList,fieldnames=None):
-        headerInstance=objectList[0]
         if fieldnames is None:
             if len(objectList)<1:
                 raise("writCSV needs at least one object in ObjectList when fieldnames are not specified")
+            headerInstance=objectList[0]
             fieldnames=TinkerPopAble.fields(headerInstance).keys()
         with open(csvfileName, 'w', newline='') as csvfile: 
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
