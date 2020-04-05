@@ -184,6 +184,21 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
             wmap=WorldMap("COVID-19 cases "+date)      
             #wmap.sample()
             wmap.directFromCSV(date)
+            
+    def testCSV(self):
+        '''
+        test writing a CSV file of all regions
+        '''
+        gfile = "jhuregions.xml"
+        regions=[]
+        TinkerPopAble.cache(self.rg, gfile, Region, regions, self.void)  
+        isoRegionsByISOCode = {}
+        for region in regions:
+            if region.isocode is not None:
+                isoRegionsByISOCode[region.isocode] = region
+        isoRegionList=[v for v in isoRegionsByISOCode.values()];      
+        isoRegionList=sorted(isoRegionList, key=lambda region: region.isocode)  
+        TinkerPopAble.writeCSV("/tmp/regions.csv",isoRegionList,["isocode","wikiDataId","country","province","lat","lon","isocode","pop"])         
         
     def testPMap(self):
         '''

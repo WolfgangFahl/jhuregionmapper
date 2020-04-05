@@ -7,6 +7,7 @@ from gremlin_python.driver.driver_remote_connection import DriverRemoteConnectio
 from gremlin_python.structure.graph import Graph
 from shutil import copyfile
 import os
+import csv
 
 class RemoteGremlin(object):
     '''
@@ -80,12 +81,7 @@ class TinkerPopAble(object):
         t=g.addV(label)
         if TinkerPopAble.debug:
             print(label)
-        # if there is a pre selection of fields store only these
-        if hasattr(self,'tpfields'):
-            tpfields=self.tpfields    
-        else:
-            # else use all fields
-            tpfields=vars(self)
+        tpfields=TinkerPopAble.fields(self)
         for name,value in tpfields.items():
             if TinkerPopAble.debug:
                 print("\t%s=%s" % (name,value))
@@ -98,7 +94,34 @@ class TinkerPopAble(object):
         fill my attributes from the given pMap dict
         '''
         for name,value in pMap.items():
-            self.__setattr__(name, value[0])    
+            self.__setattr__(name, value[0])    #
+            
+    @staticmethod
+    def fields(instance):     
+        # if there is a pre selection of fields store only these
+        if hasattr(instance,'tpfields'):
+            tpfields=instance.tpfields    
+        else:
+            # else use all fields
+            tpfields=vars(instance)
+        return tpfields       
+            
+    @staticmethod
+    def writeCSV(csvfileName,objectList,fieldnames=None):
+        headerInstance=objectList[0]
+        if fieldnames is None:
+            if len(objectList)<1:
+                raise("writCSV needs at least one object in ObjectList when fieldnames are not specified")
+            fieldnames=TinkerPopAble.fields(headerInstance).keys()
+        with open(csvfileName, 'w', newline='') as csvfile: 
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for instance in objectList:
+                rowdict={}
+                for fieldname in fieldnames:
+                    fields=TinkerPopAble.fields(instance)
+                    rowdict[fieldname]=fields[fieldname]
+                writer.writerow(rowdict)    
             
     @staticmethod        
     def cache(rg,gfile,clazz,objectList,initFunction):
