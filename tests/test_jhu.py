@@ -198,7 +198,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
                 isoRegionsByISOCode[region.isocode] = region
         isoRegionList=[v for v in isoRegionsByISOCode.values()];      
         isoRegionList=sorted(isoRegionList, key=lambda region: region.isocode)  
-        TinkerPopAble.writeCSV("/tmp/regions.csv",isoRegionList,["isocode","wikiDataId","country","province","lat","lon","isocode","pop"])         
+        TinkerPopAble.writeCSV("/tmp/regions.csv",isoRegionList,["isocode","wikiDataId","country","province","lat","lon","pop"])         
         
     def testPMap(self):
         '''

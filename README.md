@@ -27,6 +27,7 @@ When first run the region information is cached in a graphml file region.xml whi
 Later the region data is read from the graphml based tinkerpop graphdatabase.
 
 The matching result currently works for the global and US data for some 310 regions.
+[regions.csv](https://github.com/WolfgangFahl/jhuregionmapper/blob/master/regions.csv)
 <pre>
                             Country                       Province      Lat,   Lon  -  dist  -> ISO;  WikiData;                            WikiLabel;Population;  Lat;   Lon
 ✅                      Afghanistan                                    33.0,  65.0 -  145 km->    AF;     Q889;                                Afghanistan;   34940837;  34.0;  66.0
