@@ -10,12 +10,6 @@ import pandas as pd
 from jhu.jhu import COVIDCases
 import math
 
-CONFIRMED="Confirmed"
-DEATHS="Deaths"
-RECOVERED="Recovered"
-REGION='Country_Region'
-LAT='Lat'
-LON='Long_'
         
 class WorldMap(object):
     '''
@@ -39,12 +33,12 @@ class WorldMap(object):
         '''
         add a scatter plot for the given data
         '''
-        hoverdata = df[REGION] + " - "+ [title+": " + str(v) for v in df[column].tolist()]
+        hoverdata = df[COVIDCases.REGION] + " - "+ [title+": " + str(v) for v in df[column].tolist()]
         normalized_data = [math.log(value+1)*4 for value in  df[column]]
   
         scatter = go.Figure(data=go.Scattergeo(
-                lon = df[LON],
-                lat = df[LAT],
+                lon = df[COVIDCases.LON],
+                lat = df[COVIDCases.LAT],
             name = title,
                 hovertext = hoverdata,
                 marker = dict(
@@ -59,7 +53,7 @@ class WorldMap(object):
                 ))
         fig.add_trace(scatter.data[0])
         
-    def directFromCSV(self,date):
+    def directFromCSV(self,date,plots=[COVIDCases.CONFIRMED,COVIDCases.DEATHS,COVIDCases.RECOVERED]):
         '''
         create  a scatter plot map directly from the daily CSV data
         see https://towardsdatascience.com/the-impact-of-covid-19-data-analysis-and-visualization-560e54262dc
@@ -69,9 +63,10 @@ class WorldMap(object):
         print (url)
         df = pd.read_csv(url)
         fig = make_subplots()
-        self.addScatter(fig,df,"Confirmed cases",CONFIRMED,'blue')
-        self.addScatter(fig,df,'Deaths',DEATHS,'red')
-        self.addScatter(fig,df,'Recovered',RECOVERED,'green')
+        titles={COVIDCases.CONFIRMED:"Confirmed cases",COVIDCases.DEATHS:"Deaths",COVIDCases.RECOVERED:"Recovered"}
+        colors={COVIDCases.CONFIRMED:"blue"           ,COVIDCases.DEATHS:"red"   ,COVIDCases.RECOVERED:"green"}
+        for plot in plots:
+            self.addScatter(fig,df,titles[plot],plot,colors[plot])
         
         fig.update_layout(
                 title = self.title,

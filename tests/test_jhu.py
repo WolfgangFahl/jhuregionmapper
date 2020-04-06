@@ -5,6 +5,8 @@ Created on 2020-03-28
 '''
 import unittest
 import getpass
+import datetime
+import pytz
 import os
 from pathlib import Path
 from tp.gremlin import RemoteGremlin, TinkerPopAble
@@ -179,11 +181,17 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         self.assertEquals(y1,y2) 
         
     def testMap(self):
+        '''
+        test plotly scattermap of today's data
+        '''
         if getpass.getuser()!="travis":
-            date="04-02-2020"
-            wmap=WorldMap("COVID-19 cases "+date)      
+            # make sure we use the time in california 
+            today = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
+            todayStr =today.strftime("%m-%d-%Y")
+            todayIso =today.strftime("%Y-%m-%d")
+            wmap=WorldMap("COVID-19 cases "+todayIso)      
             #wmap.sample()
-            wmap.directFromCSV(date)
+            wmap.directFromCSV(todayStr,plots=[COVIDCases.CONFIRMED,COVIDCases.DEATHS])
             
     def testCSV(self):
         '''

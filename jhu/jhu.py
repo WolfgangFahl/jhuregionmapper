@@ -14,6 +14,14 @@ class COVIDCases():
     
     BASE_URL_TIMESERIES="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/"
     BASE_URL_REPORTS="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
+    
+    CONFIRMED="Confirmed"
+    DEATHS="Deaths"
+    RECOVERED="Recovered"
+    REGION='Country_Region'
+    LAT='Lat'
+    LON='Long_'
+
     def __init__(self,cachedRegions=None):
         '''
         construct me
