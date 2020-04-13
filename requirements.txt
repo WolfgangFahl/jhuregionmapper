@@ -2,6 +2,9 @@
 # https://pypi.org/project/gremlinpython/
 # latest 3.4.6 released 2020-02-24
 gremlinpython==3.4.6
+# https://pypi.org/project/pyjanusgraph/0.0.1a2/
+# pyjanusgraph
+pyjanusgraph
 #https://qwikidata.readthedocs.io/en/stable/readme.html
 qwikidata
 pyproj

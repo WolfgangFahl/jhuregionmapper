@@ -41,7 +41,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         # open the remote gremlin connection and set up the share point    
         self.rg = RemoteGremlin(self.gremlinserver)
         self.rg.open()
-        self.rg.sharepoint(self.sharepoint, "/graphdata/")
+        self.rg.setSharepoint(self.sharepoint, "/graphdata/")
         pass
 
     def tearDown(self):
@@ -49,53 +49,13 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         after finishing close the remote connection
         '''
         self.rg.close()
-        pass
-    
-    def clean(self):
-        '''
-        clean the graph database by removing all edges and vertices
-        '''
-        # get the vertices
-        gV = self.rg.g.V()
-        # drop the existing content of the graph
-        #gV.E().drop().iterate()
-        gV.V().drop().iterate()
-    
-    def testJanusGraph(self):
-        '''
-        test communication to janus Graph
-        '''
-        self.clean()
-        # we have a traversal now
-        # assert isinstance(gV,GraphTraversal)
-        # convert it to a list to get the actual vertices
-        vList = self.rg.g.V().toList()
-        print (len(vList))
-        assert len(vList) == 0
-        pass
-    
-    def test_loadGraph(self):
-        '''
-        test loading a graph ml database
-        '''
-        self.clean()
-        g = self.rg.g
-        graphmlFile = "air-routes-small.xml";
-        for path in [".","tests"]:
-            graphmlPath=path+"/"+graphmlFile
-            if os.path.isfile(graphmlPath):
-                shared = self.rg.share(graphmlPath)
-        # read the content from the air routes example
-        g.io(shared).read().iterate()
-        vCount = g.V().count().next()
-        print ("%s has %d vertices" % (shared, vCount))
-        assert vCount == 47
+        pass 
     
     def test_saveGraph(self):
         '''
         test saving a simple graph with a single vertex to a graphml file
         '''
-        self.clean()
+        self.rg.clean()
         g = self.rg.g
         g.addV("country").property("name", "Germany").iterate()
         gfile = "countries.xml"
@@ -106,7 +66,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         '''
         test caching region information retrieved from WikiData via a SPARQL query
         '''
-        self.clean()
+        self.rg.clean()
         gfile = "isoregions.xml"
         cachefile=TinkerPopAble.cache(self.rg, gfile, ISORegion, ISORegion.regions, ISORegion.fromWikiData)  
         # we check the number of regions expected here - please adapt if the
@@ -127,7 +87,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         test matching Johns Hopkins University regions to WikiData retrieved Region info by
         lat/lon distance
         '''
-        self.clean()
+        self.rg.clean()
         gfile = "isoregions.xml"
         TinkerPopAble.cache(self.rg, gfile, ISORegion, ISORegion.regions, ISORegion.fromWikiData) 
         print ("cached %3d ISO regions (from WikiData)" % (len(ISORegion.regions)))
@@ -161,7 +121,8 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
             matches = matches + region.matchIsoRegion(isoRegionsByWikiDataId, fixes)
         print ("found %3d matches" % (matches))    
         gfile = "jhuregions.xml"
-        cachefile=TinkerPopAble.cache(self.rg, gfile, Region, cases.regions.values(), self.void)  
+        regionlist=list(cases.regions.values())
+        cachefile=TinkerPopAble.cache(self.rg, gfile, Region, regionlist, self.void)  
         self.assertTrue(os.path.isfile(cachefile),cachefile)
     
     def void(self):
@@ -186,7 +147,7 @@ class JohnsHopkinsRegionMappingTest(unittest.TestCase):
         '''
         if getpass.getuser()!="travis":
             # make sure we use the time in california 
-            today = datetime.datetime.now(tz=pytz.timezone("US/Pacific"))
+            today = datetime.datetime.now(tz=pytz.timezone("US/Eastern"))-datetime.timedelta(hours=8)
             todayStr =today.strftime("%m-%d-%Y")
             todayIso =today.strftime("%Y-%m-%d")
             wmap=WorldMap("COVID-19 cases "+todayIso)      
